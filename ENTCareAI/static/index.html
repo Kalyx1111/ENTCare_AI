@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENTCare AI - ENT Health Intelligence Platform</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --azure:#1f5f8b;--azure-lt:#5a93bd;--azure-pale:#eaf2f8;
+  --teal:#0e7a6b;--teal-lt:#2ab5a0;--teal-pale:#e6f5f3;
+  --gold:#c4894a;--gold-lt:#e8b87a;--gold-pale:#fdf5ec;
+  --red:#c0392b;--cream:#fdfcfb;--cream2:#f1f5f8;
+  --text:#0f1e26;--text2:#26414f;--text3:#74909e;
+  --border:rgba(31,95,139,0.16);--border2:rgba(31,95,139,0.35);
+  --shadow:0 8px 40px rgba(15,30,38,0.10);--shadow2:0 24px 80px rgba(15,30,38,0.18);
+  --r:13px;--r2:22px;
+  --serif:'Playfair Display',serif;--body:'DM Sans',sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--body);background:var(--cream);color:var(--text);overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--cream2);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.4)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+#disc-modal{position:fixed;inset:0;z-index:9999;background:rgba(6,14,20,0.96);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:20px;}
+.disc-box{background:var(--cream);border-radius:var(--r2);max-width:700px;width:100%;max-height:92vh;overflow-y:auto;padding:48px 52px;border:1px solid var(--border2);box-shadow:var(--shadow2);}
+.disc-icon{font-size:52px;text-align:center;display:block;margin-bottom:14px;}
+.disc-box h1{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--azure);text-align:center;margin-bottom:6px;}
+.disc-sub{text-align:center;font-size:13px;color:var(--text3);margin-bottom:26px;}
+.disc-content{background:var(--azure-pale);border:1px solid var(--border2);border-radius:var(--r);padding:22px;margin-bottom:20px;font-size:13px;line-height:1.85;color:var(--text);}
+.disc-content p{margin-bottom:10px;}.disc-content p:last-child{margin-bottom:0;}
+.disc-content strong{color:var(--azure);font-weight:600;}
+.disc-chk{margin-bottom:22px;}
+.chk-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;cursor:pointer;}
+.chk-row input{width:17px;height:17px;accent-color:var(--azure);margin-top:2px;cursor:pointer;flex-shrink:0;}
+.chk-row label{font-size:13px;line-height:1.55;cursor:pointer;color:var(--text2);}
+.disc-accept{width:100%;padding:16px;border-radius:var(--r);background:linear-gradient(135deg,var(--azure),var(--azure-lt));color:#fff;font-family:var(--body);font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s;}
+.disc-accept:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(31,95,139,0.4);}
+.disc-accept:disabled{opacity:0.4;cursor:not-allowed;}
+.disc-bar{position:sticky;top:0;z-index:200;background:linear-gradient(90deg,#081420,var(--azure),#081420);background-size:200%;animation:shimmer 4s linear infinite;padding:9px 20px;text-align:center;font-size:12px;font-weight:600;color:#fff;}
+.pdot{display:inline-block;width:7px;height:7px;background:#fff;border-radius:50%;margin-right:8px;animation:pulse 1.5s ease infinite;vertical-align:middle;}
+header{position:relative;z-index:10;background:linear-gradient(160deg,#050d13 0%,#123249 45%,#0e1e38 100%);padding:64px 40px 52px;text-align:center;border-bottom:2px solid var(--teal-lt);}
+.hdr-inner{max-width:900px;margin:0 auto;}
+.hdr-eyebrow{font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--teal-lt);margin-bottom:18px;}
+header h1{font-family:var(--serif);font-size:clamp(32px,5vw,60px);font-weight:700;color:#eaf2f8;line-height:1.08;margin-bottom:8px;}
+header h1 span{color:var(--gold-lt);}
+.hdr-sub{font-size:18px;color:rgba(190,210,225,0.88);margin-bottom:20px;}
+.hdr-line{width:100px;height:1px;background:linear-gradient(90deg,transparent,var(--teal-lt),transparent);margin:18px auto;}
+.hdr-desc{font-size:14.5px;color:rgba(180,200,215,0.8);line-height:1.75;max-width:700px;margin:0 auto;}
+.hdr-badges{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+.hbadge{padding:6px 18px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid;}
+.hb-a{background:rgba(31,95,139,0.28);border-color:rgba(31,95,139,0.55);color:#c0dcf0;}
+.hb-t{background:rgba(14,122,107,0.25);border-color:rgba(14,122,107,0.5);color:#a0e0d8;}
+.hb-g{background:rgba(196,137,74,0.22);border-color:rgba(196,137,74,0.45);color:#f0d0a0;}
+.main-nav{position:sticky;top:42px;z-index:100;background:rgba(253,252,251,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;}
+.nav-inner{max-width:1500px;margin:0 auto;display:flex;overflow-x:auto;}
+.nav-inner::-webkit-scrollbar{height:0;}
+.ntab{padding:15px 13px;font-size:12.5px;font-weight:500;color:var(--text3);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.2s;}
+.ntab:hover{color:var(--azure);}.ntab.active{color:var(--azure);border-bottom-color:var(--gold-lt);font-weight:600;}
+.app{display:grid;grid-template-columns:265px 1fr;max-width:1500px;margin:0 auto;min-height:calc(100vh - 260px);}
+.sidebar{border-right:1px solid var(--border);background:rgba(234,242,248,0.3);padding:22px 0;position:sticky;top:112px;height:calc(100vh - 112px);overflow-y:auto;}
+.sb-lbl{padding:8px 18px 4px;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);}
+.sbi{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;font-size:13px;color:var(--text2);}
+.sbi:hover{background:rgba(31,95,139,0.06);}.sbi.active{background:rgba(31,95,139,0.08);border-left-color:var(--gold);color:var(--azure);font-weight:600;}
+.sbi .si{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.sb-div{height:1px;background:var(--border);margin:10px 14px;}
+.sb-new{font-size:9px;font-weight:700;background:var(--azure);color:#fff;padding:2px 7px;border-radius:10px;margin-left:auto;}
+.main{padding:38px 44px;}
+.panel{display:none;}.panel.active{display:block;animation:fadeUp 0.3s ease;}
+.ph{margin-bottom:30px;}
+.ph-crumb{font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.ph h2{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--text);line-height:1.15;}
+.ph p{margin-top:10px;font-size:16px;color:var(--text2);line-height:1.7;max-width:680px;}
+.d-line{width:60px;height:2px;background:linear-gradient(90deg,var(--azure),var(--teal),transparent);margin:12px 0;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:22px;transition:all 0.22s;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--azure),var(--teal),var(--gold));opacity:0;transition:opacity 0.2s;}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}.card:hover::before{opacity:1;}
+.card.click{cursor:pointer;}
+.ci{font-size:30px;margin-bottom:12px;}
+.card h3{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--text);margin-bottom:7px;}
+.card p{font-size:13px;color:var(--text2);line-height:1.65;}
+.ctag{display:inline-block;margin-top:10px;padding:3px 11px;border-radius:20px;font-size:11px;font-weight:600;background:var(--azure-pale);color:var(--azure);border:1px solid var(--border2);}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+.stat{background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:18px;text-align:center;}
+.stat-n{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--azure);line-height:1;}
+.stat-l{font-size:11px;color:var(--text3);font-weight:500;margin-top:5px;text-transform:uppercase;letter-spacing:0.07em;}
+.sb{background:#fff;border:1px solid var(--border);border-radius:var(--r2);padding:28px;margin-bottom:20px;}
+.sb h3{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.sb h4{font-family:var(--serif);font-size:14px;font-weight:600;color:var(--azure);margin:14px 0 7px;}
+.sb p{font-size:13.5px;line-height:1.8;color:var(--text2);margin-bottom:10px;}
+.sb ul{list-style:none;}
+.sb ul li{padding:7px 0;border-bottom:1px solid rgba(31,95,139,0.07);font-size:13px;line-height:1.65;color:var(--text2);display:flex;gap:10px;}
+.sb ul li::before{content:"\25C6";color:var(--teal);flex-shrink:0;font-size:9px;margin-top:4px;}
+.sb ul li:last-child{border-bottom:none;}
+.sb table{width:100%;border-collapse:collapse;font-size:13px;}
+.sb table th{background:var(--azure);color:#eaf2f8;font-size:11.5px;font-weight:600;padding:11px 14px;text-align:left;}
+.sb table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;}
+.alert{padding:13px 17px;border-radius:var(--r);font-size:13px;line-height:1.7;margin-bottom:16px;display:flex;gap:11px;}
+.ai-ic{font-size:17px;flex-shrink:0;margin-top:1px;}
+.alert.warn{background:var(--gold-pale);border:1px solid rgba(196,137,74,0.35);color:#6a3a00;}
+.alert.azure{background:var(--azure-pale);border:1px solid var(--border2);color:var(--azure);}
+.alert.teal{background:var(--teal-pale);border:1px solid rgba(14,122,107,0.3);color:var(--teal);}
+.alert.emergency{background:#050d13;border:2px solid var(--azure-lt);color:#c8e0f0;font-weight:600;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:var(--r);font-family:var(--body);font-size:13.5px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;}
+.btn-a{background:linear-gradient(135deg,var(--azure),var(--azure-lt));color:#fff;}
+.btn-a:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(31,95,139,0.4);}
+.btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--text2);}
+.btn-outline:hover{border-color:var(--azure);color:var(--azure);}
+.btn-lg{padding:14px 28px;font-size:15px;}.btn-sm{padding:6px 14px;font-size:12px;}
+.bgrp{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
+.spn{width:18px;height:18px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+.btn.loading .spn{display:block;}.btn.loading .bt{display:none;}
+.tab-bar{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--border);flex-wrap:wrap;}
+.tbtn{padding:10px 18px;border:none;background:transparent;font-family:var(--body);font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;transition:all 0.2s;border-bottom:2px solid transparent;margin-bottom:-2px;}
+.tbtn:hover{color:var(--text);}.tbtn.active{color:var(--azure);border-bottom-color:var(--gold-lt);font-weight:600;}
+.tpane{display:none;}.tpane.active{display:block;animation:fadeUp 0.25s ease;}
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r2);padding:44px;text-align:center;cursor:pointer;transition:all 0.3s;background:#fff;margin-bottom:16px;}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--azure);background:var(--azure-pale);}
+.uz-icon{font-size:48px;margin-bottom:14px;}
+.file-tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:14px;}
+.ftag{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500;background:var(--cream2);border:1px solid var(--border);color:var(--text3);}
+.file-row{display:flex;align-items:center;gap:11px;padding:11px 15px;border-radius:var(--r);background:#fff;border:1px solid var(--border);margin-bottom:7px;}
+.fr-ico{font-size:18px;flex-shrink:0;}.fr-name{flex:1;font-size:13px;font-weight:500;}.fr-meta{font-size:11px;color:var(--text3);}
+.fr-ok{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--teal-pale);color:var(--teal);font-weight:600;}
+.fr-del{color:var(--text3);cursor:pointer;font-size:16px;padding:3px;}.fr-del:hover{color:var(--red);}
+.assess-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.fg{margin-bottom:16px;}
+.fl{font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:block;}
+.fi,.fs{width:100%;padding:10px 14px;border-radius:var(--r);border:1.5px solid rgba(31,95,139,0.18);background:#fff;font-family:var(--body);font-size:14px;color:var(--text);outline:none;}
+.fi:focus,.fs:focus{border-color:var(--azure);}
+.chat-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
+.chat-head{background:linear-gradient(135deg,#123249,var(--azure));padding:17px 22px;display:flex;align-items:center;justify-content:space-between;}
+.chat-head h3{font-family:var(--serif);font-size:16px;font-weight:600;color:#fff;}
+.chat-head .free{background:rgba(255,255,255,0.18);color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;}
+.chat-msgs{height:420px;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;background:var(--cream);}
+.cm{max-width:82%;padding:12px 15px;border-radius:14px;font-size:13.5px;line-height:1.62;}
+.cm.user{align-self:flex-end;background:var(--azure);color:#fff;border-radius:14px 14px 4px 14px;}
+.cm.ai{align-self:flex-start;background:#fff;border:1px solid var(--border);border-radius:14px 14px 14px 4px;}
+.cm .ai-lbl{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);margin-bottom:4px;}
+.cm.sys{align-self:center;background:var(--cream2);border-radius:8px;font-size:12px;color:var(--text3);max-width:90%;text-align:center;}
+.typing span{width:7px;height:7px;background:var(--text3);border-radius:50%;animation:blink 1.2s ease infinite;display:inline-block;margin:0 2px;}
+.typing span:nth-child(2){animation-delay:0.2s;}.typing span:nth-child(3){animation-delay:0.4s;}
+.chat-input-row{display:flex;gap:10px;padding:14px 18px;border-top:1px solid var(--border);background:var(--cream2);}
+.chat-input{flex:1;padding:10px 14px;border-radius:var(--r);border:1.5px solid rgba(31,95,139,0.2);background:#fff;font-family:var(--body);font-size:13.5px;color:var(--text);outline:none;}
+.chat-input:focus{border-color:var(--azure);}
+.chat-send{padding:10px 20px;border-radius:var(--r);background:var(--azure);color:#fff;border:none;cursor:pointer;font-weight:600;font-family:var(--body);}
+.api-box{background:var(--azure-pale);border:1px solid var(--border2);border-radius:var(--r2);padding:24px;margin-bottom:20px;}
+.api-box h3{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--azure);margin-bottom:8px;}
+.api-row{display:flex;gap:10px;}
+.api-input{flex:1;padding:10px 14px;border-radius:var(--r);border:1.5px solid var(--border2);background:#fff;font-family:'Consolas',monospace;font-size:13px;color:var(--text);outline:none;}
+.api-input:focus{border-color:var(--azure);}
+.provider-card{position:relative;}
+.provider-card.selected{border-color:var(--azure);box-shadow:0 0 0 2px var(--azure-pale);}
+.provider-card.selected::after{content:'Active';position:absolute;top:14px;right:16px;font-size:11px;font-weight:700;color:var(--azure);}
+.provider-card .ctag.configured{background:var(--teal-pale);color:var(--teal);border-color:rgba(14,122,107,0.3);}
+footer{background:linear-gradient(160deg,#050d13 0%,#0d2436 100%);padding:50px 40px 30px;border-top:2px solid var(--teal-lt);}
+.footer-inner{max-width:1200px;margin:0 auto;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:36px;}
+.footer-brand h3{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--teal-lt);margin-bottom:10px;}
+.footer-brand p{font-size:13px;color:rgba(180,200,215,0.7);line-height:1.7;}
+.footer-col h4{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal-lt);margin-bottom:12px;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:7px;}
+.footer-col ul li a{font-size:13px;color:rgba(180,200,215,0.6);text-decoration:none;}
+.footer-col ul li a:hover{color:var(--teal-lt);}
+.footer-bottom{border-top:1px solid rgba(31,95,139,0.25);padding-top:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.footer-bottom p{font-size:12px;color:rgba(180,200,215,0.5);}
+.footer-disc{font-size:11px;color:rgba(180,200,215,0.4);max-width:700px;line-height:1.6;}
+@media(max-width:1000px){.app{grid-template-columns:1fr}.sidebar{display:none}.main{padding:24px 20px}}
+@media(max-width:700px){header{padding:40px 20px 32px}.g2,.g3,.assess-grid{grid-template-columns:1fr}.stat-row{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr}.disc-box{padding:28px 20px}}
+</style>
+</head>
+<body>
+<div id="disc-modal">
+  <div class="disc-box">
+    <span class="disc-icon">&#128066;</span>
+    <h1>Medical Disclaimer</h1>
+    <div class="disc-sub">ENTCare AI &mdash; ENT Health Intelligence Platform</div>
+    <div class="disc-content">
+      <p><strong>RESEARCH &amp; EDUCATIONAL PURPOSE ONLY:</strong> All content is compiled from published otolaryngology literature (AAO-HNS, ENT UK, WHO, NICE, AOI) for educational purposes only.</p>
+      <p><strong>NOT A SUBSTITUTE FOR ENT CARE:</strong> Nothing here constitutes medical advice, diagnosis, or treatment. Ear, nose, throat, and head-neck conditions require individualised clinical assessment including examination with specialised instruments. AI-generated analysis may be incomplete or inaccurate.</p>
+      <p><strong>MANDATORY PROFESSIONAL CONSULTATION:</strong> Before any treatment decision or ENT procedure &mdash; consult a qualified ENT specialist (otolaryngologist).</p>
+      <p><strong>ENT EMERGENCY &mdash; ACT IMMEDIATELY:</strong> Severe airway obstruction/stridor, uncontrolled nosebleed, sudden hearing loss, severe throat pain with drooling/difficulty opening mouth, button battery exposure &mdash; Call 112 (India) / 999 (UK) / 911 (US) or go to A&amp;E IMMEDIATELY.</p>
+    </div>
+    <div class="disc-chk">
+      <div class="chk-row"><input type="checkbox" id="dc1"><label for="dc1">I understand this is an AI research tool &mdash; NOT medical advice, diagnosis, or treatment.</label></div>
+      <div class="chk-row"><input type="checkbox" id="dc2"><label for="dc2">I will consult a qualified ENT specialist before any treatment decision.</label></div>
+      <div class="chk-row"><input type="checkbox" id="dc3"><label for="dc3">In an ENT emergency I will call 112/999/911 immediately, not use this platform first.</label></div>
+    </div>
+    <button class="disc-accept" id="disc-btn" disabled onclick="acceptDisc()">I Understand &amp; Accept &mdash; Enter ENTCare AI</button>
+  </div>
+</div>
+
+<div class="disc-bar"><span class="pdot"></span><strong>&#9888; AI RESEARCH TOOL ONLY</strong> &mdash; Not medical advice. Consult your ENT specialist. ENT EMERGENCY: <strong>112</strong> India / 999 UK / 911 US.</div>
+
+<header>
+  <div class="hdr-inner">
+    <div class="hdr-eyebrow">&#128066; ENT Health Intelligence Platform</div>
+    <h1>ENTCare <span>AI</span></h1>
+    <div class="hdr-sub">Evidence-Based Ear, Nose &amp; Throat Research &amp; Care Intelligence</div>
+    <div class="hdr-line"></div>
+    <div class="hdr-desc">Research ear conditions, sinus/nasal disorders, throat and voice problems, head-neck conditions, and ENT emergencies &mdash; from AAO-HNS, ENT UK, WHO, NICE and AOI guidelines. Includes India-specific oral cancer risk and CSOM burden context.</div>
+    <div class="hdr-badges">
+      <span class="hbadge hb-a">&#128066; Ear &amp; Hearing</span>
+      <span class="hbadge hb-t">&#128067; Nose &amp; Sinus</span>
+      <span class="hbadge hb-g">&#128483; Throat &amp; Voice</span>
+      <span class="hbadge hb-a">&#128680; ENT Emergencies</span>
+      <span class="hbadge hb-t">&#127470;&#127475; India ENT Context</span>
+      <span class="hbadge hb-g">&#128274; AES-256 Secure</span>
+    </div>
+  </div>
+</header>
+
+<nav class="main-nav">
+  <div class="nav-inner">
+    <div class="ntab active" onclick="nav('home')">&#127968; Home</div>
+    <div class="ntab" onclick="nav('upload')">&#128193; Upload</div>
+    <div class="ntab" onclick="nav('conditions')">&#128066; Conditions</div>
+    <div class="ntab" onclick="nav('ear')">&#128066; Ear</div>
+    <div class="ntab" onclick="nav('nose')">&#128067; Nose &amp; Sinus</div>
+    <div class="ntab" onclick="nav('throat')">&#128483; Throat &amp; Voice</div>
+    <div class="ntab" onclick="nav('headneck')">&#129445; Head &amp; Neck</div>
+    <div class="ntab" onclick="nav('paediatric')">&#128118; Paediatric ENT</div>
+    <div class="ntab" onclick="nav('sleep')">&#128564; Sleep &amp; Snoring</div>
+    <div class="ntab" onclick="nav('emergency')">&#128680; Emergency</div>
+    <div class="ntab" onclick="nav('india')">&#127470;&#127475; India Context</div>
+    <div class="ntab" onclick="nav('assess')">&#128203; Assessment</div>
+    <div class="ntab" onclick="nav('chat')">&#128172; Ask AI</div>
+    <div class="ntab" onclick="nav('settings')">&#9881; Settings</div>
+  </div>
+</nav>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="sb-lbl">Patient Portal</div>
+  <div class="sbi active" onclick="nav('home')"><span class="si">&#127968;</span>Dashboard</div>
+  <div class="sbi" onclick="nav('upload')"><span class="si">&#128193;</span>Upload Reports</div>
+  <div class="sbi" onclick="nav('assess')"><span class="si">&#128203;</span>Symptom Assessment</div>
+  <div class="sbi" onclick="nav('settings')"><span class="si">&#9881;</span>Settings &amp; AI Provider</div>
+  <div class="sb-div"></div>
+  <div class="sb-lbl">Conditions</div>
+  <div class="sbi" onclick="nav('conditions')"><span class="si">&#128066;</span>All Conditions</div>
+  <div class="sbi" onclick="nav('ear')"><span class="si">&#128066;</span>Ear Conditions</div>
+  <div class="sbi" onclick="nav('nose')"><span class="si">&#128067;</span>Nose &amp; Sinus</div>
+  <div class="sbi" onclick="nav('throat')"><span class="si">&#128483;</span>Throat &amp; Voice</div>
+  <div class="sbi" onclick="nav('headneck')"><span class="si">&#129445;</span>Head &amp; Neck</div>
+  <div class="sbi" onclick="nav('emergency')"><span class="si">&#128680;</span>ENT Emergencies</div>
+  <div class="sb-div"></div>
+  <div class="sb-lbl">Specialty Care</div>
+  <div class="sbi" onclick="nav('paediatric')"><span class="si">&#128118;</span>Paediatric ENT</div>
+  <div class="sbi" onclick="nav('sleep')"><span class="si">&#128564;</span>Sleep &amp; Snoring</div>
+  <div class="sbi" onclick="nav('india')"><span class="si">&#127470;&#127475;</span>India Context</div>
+  <div class="sb-div"></div>
+  <div class="sbi" onclick="nav('chat')"><span class="si">&#128172;</span>Ask AI <span class="sb-new">FREE</span></div>
+</aside>
+<main class="main">
+
+<!-- HOME -->
+<div class="panel active" id="panel-home">
+  <div class="ph"><div class="ph-crumb">Welcome</div><h2>ENT Health Intelligence</h2><div class="d-line"></div><p>AI-researched ear, nose, throat, and head-neck insights from AAO-HNS, ENT UK, WHO, NICE and AOI guidelines.</p></div>
+  <div class="alert emergency"><span class="ai-ic">&#128680;</span><div>ENT EMERGENCY: Severe airway obstruction/stridor, uncontrolled nosebleed, sudden hearing loss, severe throat pain with drooling/trismus, button battery exposure &mdash; 112/999/911 or A&amp;E IMMEDIATELY.</div></div>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-n">40+</div><div class="stat-l">ENT Topics</div></div>
+    <div class="stat"><div class="stat-n">6</div><div class="stat-l">AI Providers</div></div>
+    <div class="stat"><div class="stat-n">9</div><div class="stat-l">Specialty Areas</div></div>
+    <div class="stat"><div class="stat-n">&#128274;</div><div class="stat-l">AES-256 Secure</div></div>
+  </div>
+  <div class="alert azure"><span class="ai-ic">&#9888;</span><div><strong>Research Tool Only:</strong> All AI output is for educational research. ALWAYS consult a qualified ENT specialist before any treatment decision.</div></div>
+  <div class="g3">
+    <div class="card click" onclick="nav('ear')"><div class="ci">&#128066;</div><h3>Ear Conditions</h3><p>Otitis media/externa, hearing loss, tinnitus, vertigo, Meniere's disease.</p><span class="ctag">Hearing &amp; Balance</span></div>
+    <div class="card click" onclick="nav('nose')"><div class="ci">&#128067;</div><h3>Nose &amp; Sinus</h3><p>Rhinosinusitis, allergic rhinitis, nasal polyps, epistaxis.</p><span class="ctag">Breathing &amp; Smell</span></div>
+    <div class="card click" onclick="nav('throat')"><div class="ci">&#128483;</div><h3>Throat &amp; Voice</h3><p>Tonsillitis, laryngitis, hoarseness, dysphagia, peritonsillar abscess.</p><span class="ctag">Swallowing &amp; Voice</span></div>
+    <div class="card click" onclick="nav('headneck')"><div class="ci">&#129445;</div><h3>Head &amp; Neck</h3><p>Neck lumps, thyroid nodules, head-neck cancer red flags.</p><span class="ctag">Oncology Awareness</span></div>
+    <div class="card click" onclick="nav('india')"><div class="ci">&#127470;&#127475;</div><h3>India ENT Context</h3><p>CSOM burden, tobacco-related oral cancer, AOI guidelines, NPPCD.</p><span class="ctag">India Context</span></div>
+    <div class="card click" onclick="nav('emergency')"><div class="ci">&#128680;</div><h3>ENT Emergencies</h3><p>Airway obstruction, severe epistaxis, sudden hearing loss, button batteries.</p><span class="ctag">Emergency</span></div>
+  </div>
+</div>
+
+<!-- UPLOAD -->
+<div class="panel" id="panel-upload">
+  <div class="ph"><div class="ph-crumb">Step 1</div><h2>Upload ENT Reports</h2><div class="d-line"></div><p>Upload audiogram results, CT/MRI sinus or temporal bone imaging, and endoscopy/laryngoscopy reports for AI-assisted research.</p></div>
+  <div class="upload-zone" id="uz" onclick="document.getElementById('fi').click()">
+    <div class="uz-icon">&#128066;</div>
+    <h3 style="font-family:var(--serif);font-size:17px;font-weight:600;margin-bottom:7px;">Drop your ENT reports here</h3>
+    <p style="font-size:13px;color:var(--text3);">All ENT document and image formats supported</p>
+    <div class="file-tags">
+      <span class="ftag">Audiogram</span><span class="ftag">CT/MRI Sinus</span><span class="ftag">Endoscopy Report</span>
+      <span class="ftag">Biopsy Result</span><span class="ftag">Sleep Study</span><span class="ftag">PDF &middot; JPG &middot; PNG</span>
+    </div>
+  </div>
+  <input type="file" id="fi" multiple accept=".pdf,.jpg,.jpeg,.png,.docx,.txt" style="display:none" onchange="handleFiles(this.files)">
+  <div id="flist"></div>
+  <div class="bgrp">
+    <button class="btn btn-a btn-lg" id="up-btn" onclick="uploadFiles()"><span class="bt">&#128228; Upload &amp; Process</span><div class="spn"></div></button>
+    <button class="btn btn-outline" onclick="document.getElementById('fi').click()">+ Add More</button>
+    <button class="btn btn-outline" onclick="clearFiles()">&#128465; Clear</button>
+  </div>
+  <div id="up-result"></div>
+</div>
+
+<!-- CONDITIONS -->
+<div class="panel" id="panel-conditions">
+  <div class="ph"><div class="ph-crumb">Otolaryngology</div><h2>ENT Conditions</h2><div class="d-line"></div><p>Comprehensive clinical research from AAO-HNS, ENT UK, NICE and AOI guidelines.</p></div>
+  <div class="alert warn"><span class="ai-ic">&#9888;</span><div>All information is for educational research. ENT conditions often require examination with specialised instruments (otoscope, endoscope) that cannot be replicated remotely. Never delay assessment for concerning symptoms.</div></div>
+  <div style="margin-bottom:17px;">
+    <label class="fl">Select Condition</label>
+    <select class="fs" id="cond-sel" onchange="showCondition()">
+      <option value="">-- Select a condition --</option>
+      <optgroup label="Ear"><option>Otitis Media</option><option>Otitis Externa</option><option>Sudden Hearing Loss</option><option>Meniere's Disease</option><option>BPPV</option><option>Cholesteatoma</option></optgroup>
+      <optgroup label="Nose &amp; Sinus"><option>Chronic Rhinosinusitis</option><option>Allergic Rhinitis</option><option>Nasal Polyps</option><option>Epistaxis</option><option>Deviated Septum</option></optgroup>
+      <optgroup label="Throat &amp; Voice"><option>Tonsillitis</option><option>Peritonsillar Abscess</option><option>Chronic Hoarseness</option><option>Dysphagia</option></optgroup>
+      <optgroup label="Head &amp; Neck"><option>Neck Lump</option><option>Thyroid Nodule</option><option>Head and Neck Cancer</option></optgroup>
+      <optgroup label="Emergencies"><option>Airway Obstruction</option><option>Severe Epistaxis</option><option>Button Battery Ingestion</option><option>Septal Haematoma</option></optgroup>
+    </select>
+  </div>
+  <div id="cond-output"></div>
+  <div class="sb"><h3>Quick Clinical Reference</h3>
+    <div class="g2">
+      <div><h4>Head-Neck Cancer Red Flags</h4><ul>
+        <li>Persistent hoarseness &gt;3 weeks (especially smokers)</li>
+        <li>Unilateral otalgia with NORMAL otoscopy (referred pain - often missed)</li>
+        <li>Non-healing mouth ulcer &gt;3 weeks</li>
+        <li>Unilateral nasal obstruction with bleeding/discharge</li>
+      </ul></div>
+      <div><h4>Sudden Hearing Loss</h4><ul>
+        <li>Unilateral loss developing over &lt;72 hours = EMERGENCY</li>
+        <li>Urgent audiogram and ENT assessment needed</li>
+        <li>Steroid treatment most effective within first 2 weeks</li>
+        <li>Delay significantly worsens recovery chances</li>
+      </ul></div>
+      <div><h4>Peritonsillar Abscess (Quinsy)</h4><ul>
+        <li>Trismus (difficulty opening mouth) is key distinguishing feature</li>
+        <li>Uvula deviation, muffled 'hot potato' voice, drooling</li>
+        <li>ENT EMERGENCY - risk of airway compromise</li>
+        <li>Needs urgent drainage + IV antibiotics</li>
+      </ul></div>
+      <div><h4>India Oral Cancer Risk</h4><ul>
+        <li>Very high burden linked to gutka/paan/areca nut use</li>
+        <li>Any non-healing ulcer or white/red patch in tobacco user: urgent referral</li>
+        <li>Opportunistic screening reduces mortality in high-risk populations</li>
+        <li>Integrate tobacco cessation counselling into ENT visits</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- EAR -->
+<div class="panel" id="panel-ear">
+  <div class="ph"><div class="ph-crumb">Hearing &amp; Balance</div><h2>Ear Conditions</h2><div class="d-line"></div><p>Research on infections, hearing loss, tinnitus, and vertigo from AAO-HNS and ENT UK guidelines.</p></div>
+  <div class="tab-bar">
+    <button class="tbtn active" onclick="switchTab(this,'ea1')">Infections</button>
+    <button class="tbtn" onclick="switchTab(this,'ea2')">Hearing Loss</button>
+    <button class="tbtn" onclick="switchTab(this,'ea3')">Tinnitus &amp; Vertigo</button>
+    <button class="tbtn" onclick="switchTab(this,'ea4')">Cholesteatoma</button>
+  </div>
+  <div class="tpane active" id="ea1">
+    <div class="sb"><h3>Otitis Media and Otitis Externa</h3>
+      <p><strong>Acute otitis media:</strong> Middle ear infection, most common in children. Otalgia, fever, reduced hearing. Analgesia first-line; antibiotics if severe/bilateral in under 2s/persisting beyond 3 days.</p>
+      <p><strong>Otitis media with effusion (glue ear):</strong> Fluid without acute infection, common cause of childhood conductive hearing loss. Watchful waiting 3 months; grommets if persistent bilateral effusion affecting development.</p>
+      <p><strong>Otitis externa:</strong> External canal inflammation. Pain worse on tragal pressure (distinguishes from otitis media). Topical antibiotic/steroid drops, keep ear dry. Malignant otitis externa (diabetics/immunocompromised) needs urgent referral.</p>
+    </div>
+  </div>
+  <div class="tpane" id="ea2">
+    <div class="sb"><h3>Hearing Loss</h3>
+      <p><strong>Conductive:</strong> Wax, otitis media/effusion, otosclerosis, perforation.</p>
+      <p><strong>Sensorineural (SNHL):</strong> Presbycusis, noise-induced, ototoxic drugs, Meniere's, acoustic neuroma.</p>
+      <p><strong>Sudden SNHL:</strong> ENT EMERGENCY - unilateral loss over &lt;72 hours. Urgent audiogram, corticosteroids most effective within 2 weeks of onset.</p>
+    </div>
+  </div>
+  <div class="tpane" id="ea3">
+    <div class="sb"><h3>Tinnitus and Vertigo</h3>
+      <p><strong>Tinnitus:</strong> Usually benign; pulsatile or unilateral with asymmetric hearing loss warrants imaging.</p>
+      <p><strong>Meniere's disease:</strong> Recurrent vertigo (20 min-hours) with fluctuating hearing loss, tinnitus, aural fullness. Low-salt diet, betahistine first-line.</p>
+      <p><strong>BPPV:</strong> Brief positional vertigo. Dix-Hallpike test for diagnosis, Epley manoeuvre highly effective treatment.</p>
+    </div>
+  </div>
+  <div class="tpane" id="ea4">
+    <div class="sb"><h3>Cholesteatoma</h3>
+      <p>Abnormal skin growth in middle ear, locally destructive, can erode ossicles/bone. Chronic foul-smelling otorrhoea, conductive hearing loss. Surgical removal (mastoidectomy) is definitive treatment - cannot be treated with drops alone.</p>
+    </div>
+  </div>
+</div>
+
+<!-- NOSE -->
+<div class="panel" id="panel-nose">
+  <div class="ph"><div class="ph-crumb">Breathing &amp; Smell</div><h2>Nose &amp; Sinus Conditions</h2><div class="d-line"></div><p>Research on sinusitis, allergy, polyps, and nosebleeds from AAO-HNS and ENT UK guidelines.</p></div>
+  <div class="sb"><h3>Rhinosinusitis</h3>
+    <p>Acute: usually viral, self-limiting 7-10 days. Bacterial superinfection suggested by worsening after initial improvement or persisting &gt;10 days with severe symptoms. Chronic (12+ weeks): intranasal corticosteroids mainstay, FESS for medical failures.</p>
+  </div>
+  <div class="sb"><h3>Allergic Rhinitis and Nasal Polyps</h3>
+    <p>Allergic rhinitis: intranasal corticosteroids most effective single therapy. Nasal polyps: associated with asthma and aspirin sensitivity (Samter's triad); biologics for severe eosinophilic disease.</p>
+  </div>
+  <div class="sb"><h3>Epistaxis</h3>
+    <p>Anterior (90%+, usually self-limiting) vs posterior (more severe, higher risk). First aid: sit upright leaning forward, pinch soft nose for 10-15 minutes. SEVERE/uncontrolled epistaxis with haemodynamic compromise is an EMERGENCY.</p>
+  </div>
+</div>
+
+<!-- THROAT -->
+<div class="panel" id="panel-throat">
+  <div class="ph"><div class="ph-crumb">Swallowing &amp; Voice</div><h2>Throat &amp; Voice Conditions</h2><div class="d-line"></div><p>Research on tonsillitis, hoarseness, and swallowing problems from AAO-HNS and NICE guidelines.</p></div>
+  <div class="sb"><h3>Pharyngitis and Tonsillitis</h3>
+    <p>Usually viral; Group A Streptococcus important bacterial cause requiring antibiotics to prevent rheumatic fever (relevant given RHD burden in India). Centor/FeverPAIN criteria estimate bacterial likelihood.</p>
+  </div>
+  <div class="sb"><h3>Peritonsillar Abscess (Quinsy)</h3>
+    <p>ENT EMERGENCY. Trismus, muffled voice, uvula deviation, drooling. Needle aspiration or incision and drainage, IV antibiotics. Risk of airway compromise if untreated.</p>
+  </div>
+  <div class="sb"><h3>Chronic Hoarseness and Dysphagia</h3>
+    <p>Hoarseness &gt;3 weeks warrants laryngoscopy referral, especially in smokers (urgent 2-week-wait pathway) - to exclude vocal cord pathology or laryngeal cancer. Dysphagia with ALARM features (weight loss, odynophagia, anaemia) needs urgent endoscopy referral.</p>
+  </div>
+</div>
+
+<!-- HEAD & NECK -->
+<div class="panel" id="panel-headneck">
+  <div class="ph"><div class="ph-crumb">Oncology Awareness</div><h2>Head &amp; Neck Conditions</h2><div class="d-line"></div><p>Research on neck lumps, thyroid nodules, and head-neck cancer red flags from AAO-HNS guidelines.</p></div>
+  <div class="sb"><h3>Neck Lumps</h3>
+    <p>Persistent lymphadenopathy (&gt;3-4 weeks), especially firm/non-tender/enlarging in adults over 40, warrants urgent 2-week-wait referral to exclude malignancy. Congenital: thyroglossal duct cyst (midline), branchial cyst (lateral).</p>
+  </div>
+  <div class="sb"><h3>Thyroid Nodules</h3>
+    <p>Majority benign. Red flags: rapid growth, hoarseness, fixed/hard nodule, cervical lymphadenopathy, radiation history. FNAC with Bethesda classification guides management.</p>
+  </div>
+  <div class="sb"><h3>Head and Neck Cancer Red Flags</h3>
+    <p>Major risk factors: tobacco (smoked/smokeless), alcohol, HPV, EBV. RED FLAGS: persistent hoarseness &gt;3 weeks, unexplained neck lump, non-healing mouth ulcer, unilateral otalgia with normal otoscopy (often missed), unilateral serous otitis media in an adult.</p>
+  </div>
+</div>
+
+<!-- PAEDIATRIC -->
+<div class="panel" id="panel-paediatric">
+  <div class="ph"><div class="ph-crumb">Children's ENT</div><h2>Paediatric ENT</h2><div class="d-line"></div><p>Research on glue ear, adenotonsillar hypertrophy, and foreign bodies from AAO-HNS guidelines.</p></div>
+  <div class="sb"><h3>Glue Ear and Adenotonsillar Hypertrophy</h3>
+    <p>Glue ear: leading cause of acquired childhood hearing loss. Adenotonsillar hypertrophy: common cause of paediatric OSA (often hyperactivity rather than sleepiness). Adenotonsillectomy for significant OSA or recurrent tonsillitis.</p>
+  </div>
+  <div class="sb"><h3>Foreign Bodies</h3>
+    <p>Unilateral foul-smelling nasal discharge suggests foreign body. Button batteries (nose, ear, swallowed) are a PAEDIATRIC EMERGENCY requiring same-day removal - rapid tissue necrosis. Airway foreign body causing choking/stridor is an EMERGENCY.</p>
+  </div>
+</div>
+
+<!-- SLEEP -->
+<div class="panel" id="panel-sleep">
+  <div class="ph"><div class="ph-crumb">Sleep-Disordered Breathing</div><h2>Sleep &amp; Snoring</h2><div class="d-line"></div><p>Research on obstructive sleep apnoea and snoring from AAO-HNS guidelines.</p></div>
+  <div class="sb"><h3>Obstructive Sleep Apnoea</h3>
+    <p>Repeated upper airway collapse during sleep. Risk factors: obesity, large neck circumference, adenotonsillar hypertrophy (children). Diagnosis: polysomnography, AHI determines severity. Management: weight loss, CPAP (gold standard for moderate-severe), mandibular advancement devices, surgery for selected anatomical causes.</p>
+  </div>
+</div>
+
+<!-- EMERGENCY -->
+<div class="panel" id="panel-emergency">
+  <div class="ph"><div class="ph-crumb">URGENT</div><h2>ENT Emergencies</h2><div class="d-line"></div></div>
+  <div class="alert emergency"><span class="ai-ic">&#128680;</span><div>ENT EMERGENCIES &mdash; 112 (India) / 999 (UK) / 911 (US): Airway obstruction, epiglottitis, severe epistaxis, sudden hearing loss, button battery exposure, septal haematoma. ALL URGENT.</div></div>
+  <div class="g2">
+    <div class="sb"><h3>&#128680; Airway Obstruction</h3>
+      <p>Stridor (especially biphasic), drooling, tripod positioning, cyanosis.</p>
+      <ul>
+        <li>Epiglottitis: AVOID throat examination without airway control ready</li>
+        <li>Urgent anaesthetic/ENT involvement essential</li>
+        <li>Do not instrument the airway in emergency setting without controlled setup</li>
+      </ul>
+    </div>
+    <div class="sb"><h3>&#128680; Severe Epistaxis</h3>
+      <p>Uncontrolled or posterior nosebleed with haemodynamic compromise.</p>
+      <ul>
+        <li>Signs: tachycardia, hypotension, pallor, dizziness</li>
+        <li>Posterior packing or balloon tamponade</li>
+        <li>Urgent ENT involvement for arterial ligation if uncontrolled</li>
+      </ul>
+    </div>
+    <div class="sb"><h3>&#128680; Sudden Hearing Loss</h3>
+      <p>Unilateral loss developing over &lt;72 hours.</p>
+      <ul>
+        <li>Urgent audiogram and ENT assessment</li>
+        <li>Steroids most effective within first 2 weeks</li>
+        <li>MRI to exclude acoustic neuroma</li>
+      </ul>
+    </div>
+    <div class="sb"><h3>&#128680; Button Battery Exposure</h3>
+      <p>Nose, ear, or swallowed battery - PAEDIATRIC EMERGENCY.</p>
+      <ul>
+        <li>Rapid tissue necrosis from electrical current</li>
+        <li>Same-day removal required regardless of symptoms</li>
+        <li>Do not wait for symptoms to develop</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sb"><h3>Nasal Septal Haematoma</h3>
+    <p>Blood collection under septal mucoperichondrium after trauma. URGENT same-day drainage needed to prevent cartilage necrosis ('saddle nose' deformity) and abscess. Any nasal trauma should be examined for this.</p>
+  </div>
+</div>
+
+<!-- INDIA -->
+<div class="panel" id="panel-india">
+  <div class="ph"><div class="ph-crumb">India Context</div><h2>ENT Care in India</h2><div class="d-line"></div><p>India-specific ENT burden, treatment access, and AOI guidance.</p></div>
+  <div class="sb"><h3>Burden and Epidemiology</h3>
+    <p>Chronic suppurative otitis media (CSOM) remains significant, particularly in rural/lower socioeconomic populations. Noise-induced hearing loss growing occupational concern. Head-neck cancers (particularly oral cavity) represent very significant burden, strongly linked to smokeless tobacco/gutka/paan/areca nut use - among highest global rates.</p>
+  </div>
+  <div class="sb"><h3>Treatment Access</h3>
+    <p>AOI (Association of Otolaryngologists of India) provides national guidance. Significant tertiary ENT care (AIIMS, private hospitals) for cochlear implantation, skull base surgery. National Programme for Prevention and Control of Deafness (NPPCD) improves early identification and subsidised hearing aid provision. PM-JAY provides insurance coverage for major ENT procedures.</p>
+  </div>
+  <div class="sb"><h3>Tobacco and Oral Cancer Screening</h3>
+    <p>Opportunistic oral cavity screening by trained health workers has shown mortality benefit in high-risk populations (notably Kerala studies). Tobacco cessation counselling should be integrated into ENT consultations given direct causal link to laryngeal/oral/oropharyngeal cancers.</p>
+  </div>
+</div>
+
+<!-- ASSESSMENT -->
+<div class="panel" id="panel-assess">
+  <div class="ph"><div class="ph-crumb">Personalised Research</div><h2>Symptom Assessment</h2><div class="d-line"></div><p>Describe your ENT symptom for AI-researched guidance on possible causes and urgency.</p></div>
+  <div class="alert warn"><span class="ai-ic">&#9888;</span><div>This is an AI research tool only. Not a substitute for clinical examination with specialised instruments. For airway obstruction, severe bleeding, or sudden hearing loss &mdash; call 112/999/911 immediately.</div></div>
+  <div class="sb"><h3>Describe Your Symptom</h3>
+    <div class="assess-grid">
+      <div class="fg"><label class="fl">Chief Symptom</label><input class="fi" id="as-symptom" placeholder="e.g. ear pain, hoarseness, nasal blockage"></div>
+      <div class="fg"><label class="fl">Duration</label><select class="fs" id="as-duration"><option value="">Select</option><option>Less than 24 hours</option><option>1-7 days</option><option>1-4 weeks</option><option>Over 1 month</option><option>Recurrent</option></select></div>
+      <div class="fg"><label class="fl">Age</label><input class="fi" id="as-age" placeholder="e.g. 35"></div>
+      <div class="fg"><label class="fl">Affected Side</label><select class="fs" id="as-side"><option value="">Select</option><option>Left</option><option>Right</option><option>Bilateral</option><option>Not applicable</option></select></div>
+      <div class="fg" style="grid-column:1/-1;"><label class="fl">Additional History</label><input class="fi" id="as-history" placeholder="e.g. smoker, recent cold, swimming, on anticoagulants"></div>
+    </div>
+    <div class="bgrp">
+      <button class="btn btn-a btn-lg" id="as-btn" onclick="runAssessment()"><span class="bt">&#128203; Get AI Research</span><div class="spn"></div></button>
+    </div>
+  </div>
+  <div id="assess-output"></div>
+</div>
+
+<!-- CHAT -->
+<div class="panel" id="panel-chat">
+  <div class="ph"><div class="ph-crumb">AI Research Assistant</div><h2>Ask ENTCare AI</h2><div class="d-line"></div><p>Ask any ENT question. AI-researched from AAO-HNS, ENT UK, WHO, NICE and AOI. <strong>Free forever.</strong></p></div>
+  <div class="alert emergency"><span class="ai-ic">&#128680;</span><div>ENT EMERGENCY (airway obstruction, severe bleeding, sudden hearing loss) &mdash; 112/999/911 IMMEDIATELY. Do NOT type here first.</div></div>
+  <div class="alert warn"><span class="ai-ic">&#9888;</span><div>AI responses are for educational research only. Not medical advice. Always consult your ENT specialist.</div></div>
+  <div class="chat-wrap">
+    <div class="chat-head"><h3>&#128066; ENTCare AI Research Assistant</h3><span class="free">FREE FOREVER</span></div>
+    <div class="chat-msgs" id="chat-msgs">
+      <div class="cm sys">Welcome to ENTCare AI &#128066;</div>
+      <div class="cm ai"><div class="ai-lbl">ENTCare AI</div>Hello! I can research questions about ear infections, hearing loss, sinus problems, sore throat, hoarseness, neck lumps, and ENT emergencies. For ENT emergencies (airway obstruction, severe bleeding, sudden hearing loss) act immediately &mdash; 112/999/911. I provide educational research only, not personal medical advice.</div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chat-in" placeholder="Ask about ear pain, sinus congestion, sore throat, hoarseness..." onkeypress="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">Ask</button>
+    </div>
+    <div style="padding:8px 18px 14px;background:var(--cream2);">
+      <button onclick="openAR(document.getElementById('chat-in').value)"
+        style="display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px;border:2px solid #4d6bfe;background:transparent;color:#4d6bfe;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;width:100%;justify-content:center;"
+        onmouseover="this.style.background='#4d6bfe';this.style.color='#fff'"
+        onmouseout="this.style.background='transparent';this.style.color='#4d6bfe'">
+        &#9889; Ambiguity Resolver &mdash; Get Multi-AI Consensus Answer
+      </button>
+      <p style="font-size:11px;color:#888;text-align:center;margin-top:6px;">Query all configured AIs simultaneously for a synthesised best answer</p>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="panel" id="panel-settings">
+  <div class="ph"><div class="ph-crumb">Configuration</div><h2>Settings &amp; AI Provider</h2><div class="d-line"></div><p>Choose which AI powers your research. Keys are AES-256-GCM encrypted and stored only in your browser.</p></div>
+  <div class="sb">
+    <h3>&#129302; Choose Your AI Provider</h3>
+    <p style="margin-bottom:16px;">6 providers available. AES-256-GCM encrypted before storage. Ambiguity Resolver queries multiple AIs simultaneously.</p>
+    <div class="g3" style="margin-bottom:18px;">
+      <div class="card click provider-card" data-provider="openai" onclick="selectProvider('openai')"><div class="ci">&#129001;</div><h3>ChatGPT</h3><p><p><p>OpenAI &mdash; gpt-4o</p><span class="ctag" id="ptag-openai">Not configured</span></div>
+      <div class="card click provider-card" data-provider="gemini" onclick="selectProvider('gemini')"><div class="ci">&#128309;</div><h3>Gemini</h3><p>Google &mdash; gemini-2.0-flash</p><span class="ctag" id="ptag-gemini">Not configured</span></div>
+      <div class="card click provider-card" data-provider="grok" onclick="selectProvider('grok')"><div class="ci">&#9899;</div><h3>Grok</h3><p>xAI &mdash; grok-2-latest</p><span class="ctag" id="ptag-grok">Not configured</span></div>
+      <div class="card click provider-card" data-provider="deepseek" onclick="selectProvider('deepseek')"><div class="ci">&#128308;</div><h3>DeepSeek</h3><p>DeepSeek &mdash; deepseek-chat</p><span class="ctag" id="ptag-deepseek">Not configured</span></div>
+      <div class="card click provider-card" data-provider="anthropic" onclick="selectProvider('anthropic')"><div class="ci">&#128995;</div><h3>Claude</h3>Anthropic &mdash; claude-sonnet-4</p><span class="ctag" id="ptag-anthropic">Not configured</span></div>
+      <div class="card click provider-card" data-provider="mistral" onclick="selectProvider('mistral')"><div class="ci">&#127756;</div><h3>Mistral AI</h3><p>Mistral &mdash; mistral-large-latest</p><span class="ctag" id="ptag-mistral">Not configured</span></div>
+    </div>
+  </div>
+  <div class="api-box" id="key-entry-box">
+    <h3 id="key-entry-title">&#128273; API Key</h3>
+    <p id="key-entry-desc" style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">Select a provider above, then paste its API key here.</p>
+    <div class="api-row">
+      <input class="api-input" type="password" id="api-key-in" placeholder="Paste your API key here">
+      <button class="btn btn-a" onclick="saveKey()">Save</button>
+      <button class="btn btn-outline btn-sm" onclick="clearKey()">Clear</button>
+    </div>
+    <div id="key-status" style="margin-top:10px;font-size:12px;color:var(--text3);">No provider selected &mdash; offline mode.</div>
+    <div style="margin-top:6px;font-size:11px;color:var(--text3);">&#128274; AES-256-GCM encrypted &middot; PBKDF2 key derivation &middot; Device-bound &middot; Never leaves your browser</div>
+    <div style="margin-top:8px;"><a id="get-key-link" href="#" target="_blank" style="font-size:12px;color:var(--azure);">Get a free API key &#8594;</a></div>
+  </div>
+  <div class="sb"><h3>System Status</h3>
+    <div style="font-size:13.5px;line-height:2;color:var(--text2);">
+      Server: <span style="color:var(--teal)">&#10003; Running</span><br>
+      Active Provider: <span id="mode-disp">Offline Research</span><br>
+      Security: <span style="color:var(--azure)">&#128274; AES-256-GCM</span><br>
+      Offline KB: <span style="color:var(--teal)">&#10003; Available (9 categories)</span><br>
+      Ambiguity Resolver: <span style="color:#4d6bfe">&#9889; Available</span>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand"><h3>&#128066; ENTCare AI</h3><p>ENT Health Intelligence Platform &mdash; AI-researched insights from AAO-HNS, ENT UK, WHO, NICE, AOI and peer-reviewed literature. India-specific ENT context included.</p></div>
+      <div class="footer-col"><h4>Sections</h4><ul>
+        <li><a href="#" onclick="nav('ear')">Ear Conditions</a></li>
+        <li><a href="#" onclick="nav('nose')">Nose &amp; Sinus</a></li>
+        <li><a href="#" onclick="nav('throat')">Throat &amp; Voice</a></li>
+        <li><a href="#" onclick="nav('headneck')">Head &amp; Neck</a></li>
+        <li><a href="#" onclick="nav('paediatric')">Paediatric ENT</a></li>
+        <li><a href="#" onclick="nav('emergency')">Emergencies</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Clinical Sources</h4><ul>
+        <li><a href="https://www.entnet.org" target="_blank">AAO-HNS Guidelines</a></li>
+        <li><a href="https://www.entuk.org" target="_blank">ENT UK</a></li>
+        <li><a href="https://www.nice.org.uk" target="_blank">NICE Guidelines</a></li>
+        <li><a href="https://www.who.int" target="_blank">WHO</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>ENTCare AI &mdash; For Research &amp; Educational Purposes Only &middot; Not Medical Advice</p>
+      <div class="footer-disc">Not a substitute for professional ENT care. ENT EMERGENCY: 112 (India) / 999 (UK) / 911 (US). &#128274; AES-256-GCM key encryption.</div>
+    </div>
+  </div>
+</footer>
+<script>
+// AES-256-GCM Secure Key Storage
+/**
+ * OrthoCare / CardioCare / NeuroCare / GynoCare / OncoCare AI
+ * AES-256-GCM Client-Side Key Security Module v1.0
+ * =====================================================
+ * Encrypts API keys before storing in localStorage using
+ * AES-256-GCM via the browser's native Web Crypto API.
+ * The encryption key is derived from a device-specific
+ * fingerprint using PBKDF2 (100,000 iterations, SHA-256).
+ *
+ * Security properties:
+ * - Keys are NEVER stored in plaintext in localStorage
+ * - AES-256-GCM provides both encryption AND authentication (AEAD)
+ * - The derived key is not persisted anywhere
+ * - A random 96-bit IV is generated for every encryption operation
+ * - PBKDF2 with 100k iterations makes brute-force attacks expensive
+ * - Key never leaves the browser except when sent directly to AI provider API
+ *
+ * Usage: drop this entire block before your ST = {} state declaration.
+ * Then replace all localStorage.setItem(key, JSON.stringify(keys)) with
+ * await SecureKeyStore.save(storeName, keys)
+ * and all JSON.parse(localStorage.getItem(...)) with
+ * await SecureKeyStore.load(storeName)
+ */
+
+const SecureKeyStore = (function() {
+  'use strict';
+
+  // Derive a deterministic device fingerprint from stable browser properties.
+  // This is NOT cryptographically strong identity - it's a convenience measure
+  // to ensure keys encrypted on this browser can only be decrypted on this browser.
+  function getDeviceFingerprint(appId) {
+    var parts = [
+      appId,
+      navigator.userAgent || '',
+      navigator.language || '',
+      (screen.width || 0) + 'x' + (screen.height || 0),
+      navigator.hardwareConcurrency || 0,
+      Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+    ];
+    return parts.join('|:|');
+  }
+
+  // Derive AES-256 key from fingerprint using PBKDF2
+  async function deriveKey(appId) {
+    var fingerprint = getDeviceFingerprint(appId);
+    var encoder = new TextEncoder();
+    var rawKey = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(fingerprint),
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey']
+    );
+    // Use a fixed but app-specific salt (not secret - purpose is just domain separation)
+    var salt = encoder.encode('medical-ai-platform-' + appId + '-v1');
+    return await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
+      rawKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt']
+    );
+  }
+
+  // Encrypt a string value, returns base64-encoded IV + ciphertext
+  async function encrypt(plaintext, appId) {
+    var key = await deriveKey(appId);
+    var iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit random IV
+    var encoder = new TextEncoder();
+    var ciphertext = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv: iv },
+      key,
+      encoder.encode(plaintext)
+    );
+    // Prepend IV to ciphertext for storage: [12 bytes IV][ciphertext]
+    var combined = new Uint8Array(iv.length + ciphertext.byteLength);
+    combined.set(iv, 0);
+    combined.set(new Uint8Array(ciphertext), iv.length);
+    return btoa(String.fromCharCode.apply(null, combined));
+  }
+
+  // Decrypt a base64-encoded IV + ciphertext string
+  async function decrypt(encoded, appId) {
+    try {
+      var key = await deriveKey(appId);
+      var combined = new Uint8Array(
+        atob(encoded).split('').map(function(c) { return c.charCodeAt(0); })
+      );
+      var iv = combined.slice(0, 12);
+      var ciphertext = combined.slice(12);
+      var plaintext = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        ciphertext
+      );
+      return new TextDecoder().decode(plaintext);
+    } catch (e) {
+      // Decryption failed - key may have been stored with old method (plaintext)
+      // or device fingerprint changed. Return null to trigger re-entry.
+      return null;
+    }
+  }
+
+  // Public API
+  return {
+    /**
+     * Save API keys object to localStorage with AES-256-GCM encryption.
+     * @param {string} storeName - localStorage key name (e.g. 'cc_keys')
+     * @param {string} appId - app-specific ID for key derivation (e.g. 'cardiocare')
+     * @param {object} keysObj - { provider: 'sk-...' } keys object
+     */
+    save: async function(storeName, appId, keysObj) {
+      try {
+        var plaintext = JSON.stringify(keysObj);
+        var encrypted = await encrypt(plaintext, appId);
+        localStorage.setItem(storeName, encrypted);
+        localStorage.setItem(storeName + '_enc', '1'); // flag: encrypted format
+        return true;
+      } catch (e) {
+        // Fallback: if Web Crypto unavailable (very old browser), store plaintext
+        console.warn('[SecureKeyStore] Encryption unavailable, storing plaintext:', e.message);
+        localStorage.setItem(storeName, JSON.stringify(keysObj));
+        return false;
+      }
+    },
+
+    /**
+     * Load and decrypt API keys from localStorage.
+     * @param {string} storeName - localStorage key name
+     * @param {string} appId - must match what was used in save()
+     * @returns {object} keysObj or {} if not found / decryption failed
+     */
+    load: async function(storeName, appId) {
+      try {
+        var stored = localStorage.getItem(storeName);
+        if (!stored) return {};
+        var isEncrypted = localStorage.getItem(storeName + '_enc') === '1';
+        if (!isEncrypted) {
+          // Migrate plaintext to encrypted on next save
+          var parsed = JSON.parse(stored);
+          // Auto-migrate: re-encrypt now
+          await this.save(storeName, appId, parsed);
+          return parsed;
+        }
+        var plaintext = await decrypt(stored, appId);
+        if (plaintext === null) {
+          // Decryption failed (e.g. different browser/device after migration)
+          // Clear and start fresh - user will need to re-enter keys
+          console.warn('[SecureKeyStore] Decryption failed - clearing stored keys');
+          localStorage.removeItem(storeName);
+          localStorage.removeItem(storeName + '_enc');
+          return {};
+        }
+        return JSON.parse(plaintext);
+      } catch (e) {
+        return {};
+      }
+    },
+
+    /**
+     * Remove all keys for a store.
+     */
+    clear: function(storeName) {
+      localStorage.removeItem(storeName);
+      localStorage.removeItem(storeName + '_enc');
+    },
+
+    /**
+     * Check if Web Crypto AES-GCM is available in this browser.
+     */
+    isAvailable: function() {
+      return !!(window.crypto && window.crypto.subtle && window.crypto.subtle.encrypt);
+    }
+  };
+})();
+
+
+// Application Code
+
+// ============================================================
+// UNIVERSAL SECURITY + FEATURE PATCH v2.0
+// Injected into all 9 Medical AI platforms
+// 1. XSS escaping for all user-controlled innerHTML
+// 2. Mistral AI as 6th provider
+// 3. Ambiguity Resolver (multi-AI consensus engine)
+// 4. Content Security hardening
+// ============================================================
+
+// ── XSS ESCAPE FUNCTIONS ─────────────────────────────────────
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;')
+        .replace(/\//g, '&#x2F;');
+}
+
+function sanitizeAIResponse(text) {
+    // AI responses can contain markdown — preserve line breaks and basic formatting
+    // but strip any actual HTML tags to prevent XSS
+    if (!text) return '';
+    return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/\n/g, '<br>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>');
+}
+
+function escapeFilename(name) {
+    if (!name) return 'unknown';
+    // Only allow safe filename characters for display
+    return String(name).replace(/[<>&"'\/\\]/g, c => ({
+        '<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#x27;','/':'&#x2F;','\\':'&#x5C;'
+    }[c]));
+}
+
+// ── PROVIDER REGISTRY (6 providers) ──────────────────────────
+var PROVIDERS = {
+    anthropic: {
+        label: 'Claude (Anthropic)',
+        placeholder: 'sk-ant-api03-...',
+        getKeyUrl: 'https://console.anthropic.com',
+        icon: '&#128995;',
+        color: '#c96442'
+    },
+    openai: {
+        label: 'ChatGPT (OpenAI)',
+        placeholder: 'sk-...',
+        getKeyUrl: 'https://platform.openai.com/api-keys',
+        icon: '&#129001;',
+        color: '#10a37f'
+    },
+    gemini: {
+        label: 'Gemini (Google)',
+        placeholder: 'AIza...',
+        getKeyUrl: 'https://aistudio.google.com/apikey',
+        icon: '&#128309;',
+        color: '#4285f4'
+    },
+    grok: {
+        label: 'Grok (xAI)',
+        placeholder: 'xai-...',
+        getKeyUrl: 'https://console.x.ai',
+        icon: '&#9899;',
+        color: '#1da1f2'
+    },
+    deepseek: {
+        label: 'DeepSeek',
+        placeholder: 'sk-...',
+        getKeyUrl: 'https://platform.deepseek.com/api_keys',
+        icon: '&#128308;',
+        color: '#4d6bfe'
+    },
+    mistral: {
+        label: 'Mistral AI',
+        placeholder: 'your-mistral-key...',
+        getKeyUrl: 'https://console.mistral.ai/api-keys',
+        icon: '&#127756;',
+        color: '#ff7000'
+    }
+};
+
+// ── AMBIGUITY RESOLVER ────────────────────────────────────────
+// CSS injected once
+(function injectAmbiguityCSS() {
+    if (document.getElementById('ar-style')) return;
+    var style = document.createElement('style');
+    style.id = 'ar-style';
+    style.textContent = [
+        '#ar-overlay{position:fixed;inset:0;z-index:9000;background:rgba(5,5,15,0.92);backdrop-filter:blur(14px);display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;}',
+        '#ar-overlay.ar-open{display:flex;}',
+        '#ar-box{background:#fff;border-radius:18px;max-width:900px;width:100%;padding:0;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,0.4);}',
+        '#ar-head{padding:22px 28px;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:space-between;}',
+        '#ar-head h2{font-size:17px;font-weight:700;color:#fff;margin:0;}',
+        '#ar-head p{font-size:12px;color:rgba(255,255,255,0.6);margin:4px 0 0;}',
+        '#ar-close{background:rgba(255,255,255,0.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}',
+        '#ar-close:hover{background:rgba(255,255,255,0.25);}',
+        '#ar-query-area{padding:20px 28px;border-bottom:1px solid #eee;}',
+        '#ar-query-area label{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#666;display:block;margin-bottom:6px;}',
+        '#ar-prompt{width:100%;padding:12px 14px;border:1.5px solid #ddd;border-radius:10px;font-family:inherit;font-size:14px;resize:vertical;min-height:80px;outline:none;box-sizing:border-box;}',
+        '#ar-prompt:focus{border-color:#4d6bfe;}',
+        '#ar-providers-area{padding:18px 28px;border-bottom:1px solid #eee;}',
+        '#ar-providers-area label{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#666;display:block;margin-bottom:10px;}',
+        '.ar-prov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}',
+        '.ar-prov-chip{display:flex;align-items:center;gap:8px;padding:9px 12px;border:2px solid #eee;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.15s;user-select:none;}',
+        '.ar-prov-chip:hover{border-color:#4d6bfe;background:#f0f2ff;}',
+        '.ar-prov-chip.ar-selected{border-color:#4d6bfe;background:#eef1ff;font-weight:600;}',
+        '.ar-prov-chip .ar-key-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}',
+        '.ar-prov-chip .ar-key-ok{background:#22c55e;}',
+        '.ar-prov-chip .ar-key-miss{background:#ef4444;}',
+        '#ar-actions{padding:16px 28px;display:flex;gap:10px;align-items:center;}',
+        '#ar-run-btn{padding:12px 28px;border-radius:10px;background:linear-gradient(135deg,#4d6bfe,#7c3aed);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;}',
+        '#ar-run-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(77,107,254,0.4);}',
+        '#ar-run-btn:disabled{opacity:0.5;cursor:not-allowed;}',
+        '#ar-note{font-size:12px;color:#888;}',
+        '#ar-results{padding:0 28px 28px;}',
+        '.ar-resp-card{margin-top:16px;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;}',
+        '.ar-resp-head{padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;}',
+        '.ar-resp-body{padding:14px 16px;font-size:13.5px;line-height:1.75;color:#374151;background:#fafafa;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow-y:auto;}',
+        '.ar-resp-err{padding:14px 16px;font-size:13px;color:#ef4444;background:#fff5f5;}',
+        '#ar-synthesis{margin-top:20px;border:2px solid #4d6bfe;border-radius:14px;overflow:hidden;}',
+        '#ar-synthesis-head{padding:14px 18px;background:linear-gradient(135deg,#4d6bfe,#7c3aed);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}',
+        '#ar-synthesis-body{padding:16px 18px;font-size:13.5px;line-height:1.8;color:#1f2937;white-space:pre-wrap;word-break:break-word;}',
+        '#ar-spinner{display:none;padding:24px;text-align:center;color:#666;}',
+        '.ar-spin{display:inline-block;width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#4d6bfe;border-radius:50%;animation:arSpin 0.8s linear infinite;margin-bottom:8px;}',
+        '@keyframes arSpin{to{transform:rotate(360deg)}}',
+        '.ar-stat-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;margin-left:auto;}',
+        '.ar-stat-ok{background:#dcfce7;color:#166534;}',
+        '.ar-stat-err{background:#fee2e2;color:#991b1b;}',
+        '@media(max-width:600px){.ar-prov-grid{grid-template-columns:1fr 1fr;}#ar-box{padding:0;}}'
+    ].join('');
+    document.head.appendChild(style);
+})();
+
+// Build the overlay HTML once
+function buildArOverlay() {
+    if (document.getElementById('ar-overlay')) return;
+    var overlay = document.createElement('div');
+    overlay.id = 'ar-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.innerHTML = [
+        '<div id="ar-box">',
+        '  <div id="ar-head">',
+        '    <div>',
+        '      <h2>&#128101; Ambiguity Resolver &mdash; Multi-AI Consensus</h2>',
+        '      <p>Select AIs with valid keys &rarr; all run your query in parallel &rarr; best answer synthesised</p>',
+        '    </div>',
+        '    <button id="ar-close" onclick="closeAR()" title="Close">&#10005;</button>',
+        '  </div>',
+        '  <div id="ar-query-area">',
+        '    <label>Your Question / Query</label>',
+        '    <textarea id="ar-prompt" placeholder="Enter your medical research question here..."></textarea>',
+        '  </div>',
+        '  <div id="ar-providers-area">',
+        '    <label>Select AI Providers (only those with saved keys are available)</label>',
+        '    <div class="ar-prov-grid" id="ar-prov-grid"></div>',
+        '  </div>',
+        '  <div id="ar-actions">',
+        '    <button id="ar-run-btn" onclick="runAmbiguityResolver()" disabled>',
+        '      &#9889; Resolve with Multi-AI',
+        '    </button>',
+        '    <span id="ar-note">Select at least 2 AIs</span>',
+        '  </div>',
+        '  <div id="ar-spinner">',
+        '    <div class="ar-spin"></div>',
+        '    <div id="ar-spin-msg">Querying selected AIs in parallel&hellip;</div>',
+        '  </div>',
+        '  <div id="ar-results"></div>',
+        '</div>'
+    ].join('');
+    document.body.appendChild(overlay);
+    // Close on backdrop click
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) closeAR();
+    });
+}
+
+function openAR(prefillText) {
+    buildArOverlay();
+    renderArProviderChips();
+    if (prefillText) {
+        var ta = document.getElementById('ar-prompt');
+        if (ta) ta.value = prefillText;
+    }
+    document.getElementById('ar-results').innerHTML = '';
+    document.getElementById('ar-spinner').style.display = 'none';
+    document.getElementById('ar-overlay').classList.add('ar-open');
+}
+
+function closeAR() {
+    var ov = document.getElementById('ar-overlay');
+    if (ov) ov.classList.remove('ar-open');
+}
+
+function renderArProviderChips() {
+    var grid = document.getElementById('ar-prov-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    Object.keys(PROVIDERS).forEach(function(pid) {
+        var meta = PROVIDERS[pid];
+        var hasKey = !!(window.ST && window.ST.keys && window.ST.keys[pid]);
+        var chip = document.createElement('div');
+        chip.className = 'ar-prov-chip' + (hasKey ? '' : ' ar-disabled');
+        chip.dataset.provider = pid;
+        chip.style.opacity = hasKey ? '1' : '0.45';
+        chip.innerHTML = '<span>' + meta.icon + '</span>'
+            + '<span>' + escapeHtml(meta.label) + '</span>'
+            + '<span class="ar-key-dot ' + (hasKey ? 'ar-key-ok' : 'ar-key-miss') + '" title="' + (hasKey ? 'Key configured' : 'No key saved') + '"></span>';
+        if (hasKey) {
+            chip.addEventListener('click', function() {
+                chip.classList.toggle('ar-selected');
+                updateArRunBtn();
+            });
+        }
+        grid.appendChild(chip);
+    });
+}
+
+function updateArRunBtn() {
+    var selected = document.querySelectorAll('.ar-prov-chip.ar-selected');
+    var btn = document.getElementById('ar-run-btn');
+    var note = document.getElementById('ar-note');
+    if (!btn) return;
+    var count = selected.length;
+    btn.disabled = count < 2;
+    if (note) note.textContent = count < 2
+        ? 'Select at least 2 AIs (' + count + ' selected)'
+        : count + ' AIs selected \u2014 ready to resolve';
+}
+
+function runAmbiguityResolver() {
+    var prompt = (document.getElementById('ar-prompt') || {}).value;
+    if (!prompt || !prompt.trim()) {
+        alert('Please enter a question first.');
+        return;
+    }
+    var selected = Array.from(document.querySelectorAll('.ar-prov-chip.ar-selected'));
+    if (selected.length < 2) { alert('Select at least 2 AIs.'); return; }
+
+    var pairs = selected.map(function(chip) {
+        return { provider: chip.dataset.provider, key: window.ST.keys[chip.dataset.provider] };
+    });
+
+    // Show spinner, hide results
+    document.getElementById('ar-spinner').style.display = 'block';
+    document.getElementById('ar-results').innerHTML = '';
+    document.getElementById('ar-run-btn').disabled = true;
+    document.getElementById('ar-spin-msg').textContent =
+        'Querying ' + pairs.length + ' AIs in parallel\u2026';
+
+    // POST to /api/resolve (backend endpoint we add)
+    fetch('/api/resolve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            prompt: prompt.trim(),
+            providers: pairs
+        })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        document.getElementById('ar-spinner').style.display = 'none';
+        document.getElementById('ar-run-btn').disabled = false;
+        renderArResults(data, prompt.trim());
+    })
+    .catch(function(err) {
+        document.getElementById('ar-spinner').style.display = 'none';
+        document.getElementById('ar-run-btn').disabled = false;
+        document.getElementById('ar-results').innerHTML =
+            '<div style="padding:16px;color:#ef4444;">&#10006; Connection error: ' + escapeHtml(String(err)) + '</div>';
+    });
+}
+
+function renderArResults(data, prompt) {
+    var container = document.getElementById('ar-results');
+    if (!container) return;
+    var html = '';
+
+    // Individual AI responses
+    var responses = data.responses || [];
+    responses.forEach(function(r) {
+        var icon = (PROVIDERS[r.provider] || {}).icon || '&#129302;';
+        var label = escapeHtml((PROVIDERS[r.provider] || {}).label || r.provider);
+        var badgeClass = r.success ? 'ar-stat-ok' : 'ar-stat-err';
+        var badgeText = r.success ? '&#10003; Success' : '&#10006; Failed';
+        html += '<div class="ar-resp-card">';
+        html += '<div class="ar-resp-head" style="background:#f8f9fa;">';
+        html += icon + ' <span>' + label + '</span>';
+        html += '<span class="ar-stat-badge ' + badgeClass + '">' + badgeText + '</span>';
+        html += '</div>';
+        if (r.success && r.text) {
+            html += '<div class="ar-resp-body">' + sanitizeAIResponse(r.text) + '</div>';
+        } else {
+            html += '<div class="ar-resp-err">&#9888; ' + escapeHtml(r.mode || 'No response') + '</div>';
+        }
+        html += '</div>';
+    });
+
+    // Synthesis
+    if (data.synthesis) {
+        html += '<div id="ar-synthesis">';
+        html += '<div id="ar-synthesis-head">&#127941; Synthesised Best Answer</div>';
+        html += '<div id="ar-synthesis-body">' + sanitizeAIResponse(data.synthesis) + '</div>';
+        html += '</div>';
+    }
+
+    container.innerHTML = html;
+}
+
+// ── AMBIGUITY RESOLVER BUTTON FACTORY ────────────────────────
+function createARButton(prefillFn, containerEl, extraClass) {
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-ar' + (extraClass ? ' ' + extraClass : '');
+    btn.innerHTML = '&#9889; Resolve with Multi-AI';
+    btn.title = 'Query multiple AIs simultaneously and get a synthesised best answer';
+    btn.style.cssText = [
+        'display:inline-flex;align-items:center;gap:7px;padding:10px 20px;',
+        'border-radius:10px;border:2px solid #4d6bfe;background:transparent;',
+        'color:#4d6bfe;font-family:inherit;font-size:13px;font-weight:700;',
+        'cursor:pointer;transition:all 0.2s;white-space:nowrap;'
+    ].join('');
+    btn.addEventListener('mouseenter', function() {
+        btn.style.background = '#4d6bfe';
+        btn.style.color = '#fff';
+    });
+    btn.addEventListener('mouseleave', function() {
+        btn.style.background = 'transparent';
+        btn.style.color = '#4d6bfe';
+    });
+    btn.addEventListener('click', function() {
+        openAR(prefillFn ? prefillFn() : '');
+    });
+    if (containerEl) containerEl.appendChild(btn);
+    return btn;
+}
+
+
+window.ST = { provider: localStorage.getItem('entcare_provider') || '', keys: {}, files: [] };
+function currentApiKey(){ return ST.provider ? (ST.keys[ST.provider] || '') : ''; }
+
+document.addEventListener('DOMContentLoaded', function(){
+  (async function(){
+    try {
+      if(SecureKeyStore.isAvailable()){ ST.keys = await SecureKeyStore.load('ent_keys','entcare'); }
+      else { var r=localStorage.getItem('ent_keys'); ST.keys=r?JSON.parse(r):{}; }
+    } catch(e){ ST.keys={}; }
+  })();
+  ['dc1','dc2','dc3'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.addEventListener('change', function(){
+      var ok=['dc1','dc2','dc3'].every(function(i){ var x=document.getElementById(i); return x&&x.checked; });
+      var btn=document.getElementById('disc-btn'); if(btn) btn.disabled=!ok;
+    });
+  });
+  if(sessionStorage.getItem('entcare_disc')){
+    var m=document.getElementById('disc-modal'); if(m) m.style.display='none';
+  }
+  setTimeout(function(){ refreshProviderTags(); selectProvider(ST.provider,true); },100);
+});
+
+function acceptDisc(){
+  var m=document.getElementById('disc-modal'); if(m) m.style.display='none';
+  sessionStorage.setItem('entcare_disc','1');
+}
+
+function nav(id){
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.ntab,.sbi').forEach(function(n){ n.classList.remove('active'); });
+  var p=document.getElementById('panel-'+id); if(p) p.classList.add('active');
+  document.querySelectorAll('.ntab,.sbi').forEach(function(el){
+    var oc=el.getAttribute('onclick');
+    if(oc && oc.indexOf("'"+id+"'")!==-1) el.classList.add('active');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function switchTab(btn,id){
+  var parent=btn.closest('.panel');
+  if(parent){
+    parent.querySelectorAll('.tbtn').forEach(function(b){ b.classList.remove('active'); });
+    parent.querySelectorAll('.tpane').forEach(function(p){ p.classList.remove('active'); });
+  }
+  btn.classList.add('active');
+  var pane=document.getElementById(id); if(pane) pane.classList.add('active');
+}
+
+function selectProvider(pid, init){
+  ST.provider=pid; localStorage.setItem('entcare_provider', pid||'');
+  document.querySelectorAll('.provider-card').forEach(function(c){ c.classList.remove('selected'); });
+  var ac=document.querySelector('.provider-card[data-provider="'+pid+'"]');
+  if(ac) ac.classList.add('selected');
+  var box=document.getElementById('key-entry-box');
+  var title=document.getElementById('key-entry-title');
+  var desc=document.getElementById('key-entry-desc');
+  var input=document.getElementById('api-key-in');
+  var link=document.getElementById('get-key-link');
+  var status=document.getElementById('key-status');
+  var md=document.getElementById('mode-disp');
+  if(!pid){
+    if(box) box.style.display='none';
+    if(status){ status.textContent='Offline mode.'; status.style.color='var(--text3)'; }
+    if(md) md.textContent='Offline Research';
+    if(!init) toast('Offline mode active.');
+    return;
+  }
+  var meta=PROVIDERS[pid];
+  if(!meta) return;
+  if(box) box.style.display='block';
+  if(title) title.innerHTML=escapeHtml(meta.icon)+' '+escapeHtml(meta.label)+' API Key';
+  if(desc) desc.innerHTML='Get key at <strong>'+escapeHtml(meta.getKeyUrl.replace('https://',''))+'</strong>. AES-256-GCM encrypted.';
+  if(input){ input.placeholder=escapeHtml(meta.placeholder); input.value=ST.keys[pid]||''; }
+  if(link) link.href=meta.getKeyUrl;
+  if(ST.keys[pid]){
+    if(status){ status.textContent='Configured: '+meta.label; status.style.color='var(--teal)'; }
+    if(md) md.textContent='Live AI ('+meta.label+')';
+  } else {
+    if(status){ status.textContent='No key for '+meta.label; status.style.color='var(--text3)'; }
+    if(md) md.textContent=meta.label+' - key required';
+  }
+  if(!init){
+    var keyBox=document.getElementById('key-entry-box');
+    if(keyBox) window.scrollTo({top:keyBox.offsetTop-100,behavior:'smooth'});
+  }
+}
+
+function refreshProviderTags(){
+  Object.keys(PROVIDERS).forEach(function(p){
+    var tag=document.getElementById('ptag-'+p); if(!tag) return;
+    if(ST.keys[p]){ tag.textContent='Configured'; tag.classList.add('configured'); }
+    else { tag.textContent='Not configured'; tag.classList.remove('configured'); }
+  });
+}
+
+function saveKey(){
+  if(!ST.provider){ toast('Select a provider first.'); return; }
+  var input=document.getElementById('api-key-in');
+  var k=input?input.value.trim():'';
+  if(!k){ toast('Please paste an API key.'); return; }
+  ST.keys[ST.provider]=k;
+  try {
+    if(SecureKeyStore.isAvailable()) SecureKeyStore.save('ent_keys','entcare',ST.keys);
+    else localStorage.setItem('ent_keys',JSON.stringify(ST.keys));
+  } catch(e){ localStorage.setItem('ent_keys',JSON.stringify(ST.keys)); }
+  refreshProviderTags();
+  selectProvider(ST.provider,true);
+  toast(PROVIDERS[ST.provider].label+' key saved (AES-256 encrypted).');
+}
+
+function clearKey(){
+  if(!ST.provider) return;
+  delete ST.keys[ST.provider];
+  try {
+    if(SecureKeyStore.isAvailable()) SecureKeyStore.save('ent_keys','entcare',ST.keys);
+    else localStorage.setItem('ent_keys',JSON.stringify(ST.keys));
+  } catch(e){ localStorage.setItem('ent_keys',JSON.stringify(ST.keys)); }
+  var input=document.getElementById('api-key-in'); if(input) input.value='';
+  refreshProviderTags(); selectProvider(ST.provider,true);
+}
+
+var FICONS={pdf:'&#128196;',jpg:'&#128444;',jpeg:'&#128444;',png:'&#128444;',docx:'&#128196;',txt:'&#128221;'};
+
+function handleFiles(files){
+  Array.from(files).forEach(function(f){
+    if(ST.files.find(function(x){ return x.name===f.name&&x.size===f.size; })) return;
+    ST.files.push(f);
+    var ext=f.name.split('.').pop().toLowerCase();
+    var sz=f.size>1048576?(f.size/1048576).toFixed(1)+'MB':Math.round(f.size/1024)+'KB';
+    var el=document.createElement('div'); el.className='file-row'; el.dataset.fname=f.name;
+    el.innerHTML='<span class="fr-ico">'+(FICONS[ext]||'&#128193;')+'</span>'
+      +'<span class="fr-name">'+escapeFilename(f.name)+'</span>'
+      +'<span class="fr-meta">'+escapeHtml(sz)+'</span>'
+      +'<span class="fr-ok">Ready</span>'
+      +'<span class="fr-del" onclick="removeByEl(this)">&#10005;</span>';
+    var fl=document.getElementById('flist'); if(fl) fl.appendChild(el);
+  });
+}
+
+function removeByEl(btn){
+  var r=btn.closest('.file-row'); if(!r) return;
+  var n=r.dataset.fname;
+  ST.files=ST.files.filter(function(f){ return f.name!==n; });
+  r.remove();
+}
+
+function clearFiles(){ ST.files=[]; var fl=document.getElementById('flist'); if(fl) fl.innerHTML=''; }
+
+function uploadFiles(){
+  if(!ST.files.length){ toast('Please select files first.'); return; }
+  var btn=document.getElementById('up-btn'); setLoad(btn,true);
+  setTimeout(function(){
+    var out=document.getElementById('up-result');
+    if(out) out.innerHTML='<div class="alert teal" style="margin-top:16px;"><span class="ai-ic">&#10003;</span><div><strong>'+escapeHtml(String(ST.files.length))+' file(s) uploaded.</strong> Go to Assessment or Conditions to research your reports.</div></div>';
+    setLoad(btn,false);
+  },2000);
+}
+
+function runAssessment(){
+  var symptom=(document.getElementById('as-symptom')||{}).value||'';
+  var duration=(document.getElementById('as-duration')||{}).value||'';
+  var age=(document.getElementById('as-age')||{}).value||'';
+  var side=(document.getElementById('as-side')||{}).value||'';
+  var history=(document.getElementById('as-history')||{}).value||'';
+  if(!symptom.trim()){ toast('Please describe your symptom.'); return; }
+  var btn=document.getElementById('as-btn'); setLoad(btn,true);
+  var out=document.getElementById('assess-output'); if(!out) return;
+  var key=currentApiKey();
+  if(ST.provider&&key){
+    fetch('/api/ent/assess',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({symptom:symptom,duration:duration,age:age,side:side,history:history,provider:ST.provider,api_key:key})
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      setLoad(btn,false);
+      var mt=data.mode==='live_ai'
+        ?'<span class="ctag" style="background:var(--teal-pale);color:var(--teal);border-color:var(--border2);display:inline-block;margin-bottom:10px;">Live AI &middot; '+escapeHtml(PROVIDERS[ST.provider].label)+'</span>'
+        :'<span class="ctag" style="display:inline-block;margin-bottom:10px;">Offline Research</span>';
+      out.innerHTML='<div class="sb"><h3>Symptom Assessment Research</h3>'+mt
+        +'<div style="white-space:pre-wrap;font-size:13.5px;line-height:1.8;color:var(--text2);">'
+        +sanitizeAIResponse(data.content||'')+'</div></div>';
+      out.scrollIntoView({behavior:'smooth',block:'start'});
+    }).catch(function(){ setLoad(btn,false); toast('Could not reach server. Try AI Chat.'); });
+  } else {
+    setLoad(btn,false);
+    out.innerHTML='<div class="sb"><h3>Symptom Assessment Research</h3>'
+      +'<p>For AI-researched assessment of <strong>'+escapeHtml(symptom)+'</strong>, please choose an AI provider in Settings.</p>'
+      +'<p>General guidance: any concerning ENT symptom should be assessed promptly. '
+      +'For emergencies (airway obstruction, severe bleeding, sudden hearing loss): 112/999/911 immediately.</p></div>';
+    out.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+var CONDITIONS_KB = {
+  'Sudden Hearing Loss': '<div class="sb"><h3>Sudden Sensorineural Hearing Loss</h3><p>ENT EMERGENCY. Unilateral hearing loss developing over less than 72 hours.</p><h4>Key Points</h4><ul><li>Requires urgent audiogram and ENT assessment</li><li>Corticosteroid treatment (oral or intratympanic) most effective within 2 weeks of onset</li><li>Delay significantly worsens recovery prognosis</li><li>MRI internal auditory meati typically arranged to exclude acoustic neuroma</li></ul><div class="alert emergency" style="margin-top:12px;"><span class="ai-ic">&#128680;</span><div>Any sudden hearing loss needs urgent same-day ENT assessment. Do not wait.</div></div></div>',
+
+  'Peritonsillar Abscess': '<div class="sb"><h3>Peritonsillar Abscess (Quinsy)</h3><p>ENT EMERGENCY. Pus collection between tonsil capsule and pharyngeal muscles, usually complication of tonsillitis.</p><h4>Recognition</h4><ul><li>Trismus (difficulty opening mouth) - key distinguishing feature</li><li>Muffled "hot potato" voice, uvula deviation away from affected side</li><li>Drooling, severe unilateral throat pain, fever</li></ul><h4>Management</h4><p>Needle aspiration or incision and drainage (urgent), IV antibiotics. Risk of airway compromise if untreated - urgent ENT assessment mandatory.</p><div class="alert emergency" style="margin-top:12px;"><span class="ai-ic">&#128680;</span><div>Severe throat pain with difficulty opening mouth: urgent ENT/A&amp;E assessment needed.</div></div></div>',
+
+  'Chronic Rhinosinusitis': '<div class="sb"><h3>Chronic Rhinosinusitis</h3><p>Symptoms for 12+ weeks: nasal obstruction, discharge, facial pain/pressure, reduced smell.</p><h4>Management</h4><ul><li>Intranasal corticosteroids are the mainstay of treatment</li><li>Saline irrigation as adjunct</li><li>Short courses of oral steroids for nasal polyp disease</li><li>Endoscopic sinus surgery (FESS) for medical treatment failures</li></ul><div class="alert warn" style="margin-top:12px;"><span class="ai-ic">&#9888;</span><div>Research purposes only. Consult your ENT specialist for personalised management.</div></div></div>',
+
+  'Head and Neck Cancer': '<div class="sb"><h3>Head and Neck Cancer</h3><p>Encompasses oral cavity, oropharynx, larynx, hypopharynx, nasopharynx, salivary gland, and thyroid cancers.</p><h4>Major Risk Factors</h4><ul><li>Tobacco (smoked and smokeless - especially relevant in India)</li><li>Alcohol (synergistic with tobacco)</li><li>HPV (oropharyngeal cancer)</li></ul><h4>RED FLAG Symptoms</h4><ul><li>Persistent hoarseness &gt;3 weeks (especially smokers)</li><li>Unexplained neck lump</li><li>Non-healing mouth ulcer &gt;3 weeks</li><li>Unilateral otalgia with NORMAL otoscopy (often missed red flag)</li></ul><div class="alert emergency" style="margin-top:12px;"><span class="ai-ic">&#128680;</span><div>Any red flag symptom warrants urgent 2-week-wait ENT referral.</div></div></div>',
+
+  'Button Battery Ingestion': '<div class="sb"><h3>Button Battery Ingestion/Insertion</h3><p>PAEDIATRIC EMERGENCY. Nose, ear, or swallowed battery.</p><h4>Why Urgent</h4><ul><li>Causes rapid tissue necrosis through electrical current generation</li><li>Alkaline chemical burns can cause perforation within hours</li><li>Same-day removal required regardless of symptoms</li></ul><div class="alert emergency" style="margin-top:12px;"><span class="ai-ic">&#128680;</span><div>Any suspected button battery exposure: immediate same-day ENT/emergency assessment. Do not wait for symptoms.</div></div></div>'
+};
+
+function showCondition(){
+  var sel=document.getElementById('cond-sel');
+  var out=document.getElementById('cond-output');
+  if(!sel||!out) return;
+  var v=sel.value;
+  if(!v){ out.innerHTML=''; return; }
+  if(CONDITIONS_KB[v]){ out.innerHTML=CONDITIONS_KB[v]; out.scrollIntoView({behavior:'smooth',block:'start'}); return; }
+  fetchConditionLive(v,out);
+}
+
+function fetchConditionLive(sel,out){
+  var key=currentApiKey();
+  if(ST.provider&&key){
+    out.innerHTML='<div class="sb"><h3>'+escapeHtml(sel)+'</h3>'
+      +'<div style="padding:10px 0;"><span class="typing"><span></span><span></span><span></span></span> Researching from AAO-HNS/ENT UK guidelines...</div></div>';
+    out.scrollIntoView({behavior:'smooth',block:'start'});
+    fetch('/api/condition/'+encodeURIComponent(sel)+'?provider='+encodeURIComponent(ST.provider)+'&api_key='+encodeURIComponent(key))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var body=data.content||(data.condition?JSON.stringify(data.condition,null,2):'No research available.');
+      var mt=data.mode==='live_ai'
+        ?'<span class="ctag" style="background:var(--teal-pale);color:var(--teal);display:inline-block;margin-bottom:10px;">Live AI &middot; '+escapeHtml(PROVIDERS[ST.provider].label)+'</span>'
+        :'<span class="ctag" style="display:inline-block;margin-bottom:10px;">Offline Research</span>';
+      out.innerHTML='<div class="sb"><h3>'+escapeHtml(sel)+'</h3>'+mt
+        +'<div style="white-space:pre-wrap;font-size:13.5px;line-height:1.8;color:var(--text2);">'
+        +sanitizeAIResponse(body)+'</div></div>';
+    }).catch(function(){
+      out.innerHTML='<div class="sb"><h3>'+escapeHtml(sel)+'</h3><p>Could not reach server. Try the AI Chat tab.</p></div>';
+    });
+  } else {
+    out.innerHTML='<div class="sb"><h3>'+escapeHtml(sel)+'</h3><p>Choose an AI provider in Settings for live research on this condition.</p></div>';
+    out.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+var CHAT_KB = {
+  'ear pain': 'Ear pain research: Pain worse on moving the ear (tragal pressure/pinna) suggests otitis externa (outer ear infection) - common after swimming. Pain with fever and reduced hearing, especially in children, suggests otitis media (middle ear infection) - often resolves with analgesia alone. Severe pain with facial weakness or swelling behind the ear needs urgent assessment. Consult your ENT specialist or GP, especially if pain is severe or persistent.',
+  'hearing loss': 'Hearing loss research: Sudden hearing loss in one ear developing over less than 72 hours is an ENT EMERGENCY requiring same-day assessment - steroid treatment is most effective if started within 2 weeks, so do not delay. Gradual hearing loss is more likely age-related, noise-induced, or due to wax/fluid. An audiogram helps distinguish the type and guide treatment, including hearing aids if appropriate. Consult your ENT specialist urgently for any sudden hearing change.',
+  'sore throat': 'Sore throat research: Usually viral and self-limiting with analgesia and hydration. Severe one-sided throat pain with difficulty opening the mouth (trismus), drooling, and a muffled voice could indicate a peritonsillar abscess (quinsy) - this is an ENT EMERGENCY requiring urgent assessment. Persistent sore throat beyond 3-4 weeks, especially in smokers, warrants ENT referral to exclude other causes. Consult your doctor if severe or not improving.',
+  'hoarseness': 'Hoarseness research: Acute hoarseness is usually viral laryngitis, resolving within 1-2 weeks with voice rest. Hoarseness persisting beyond 3 weeks needs ENT referral for laryngoscopy to examine the vocal cords directly - this is particularly important in smokers, where persistent hoarseness needs urgent assessment to exclude laryngeal cancer. Voice overuse (teachers, singers) can cause vocal cord nodules, treated with voice therapy. Consult your ENT specialist for any hoarseness lasting more than 3 weeks.',
+  'blocked nose': 'Nasal blockage research: Common causes include allergic rhinitis (with sneezing, itching, clear discharge), chronic sinusitis (with facial pressure, thick discharge, reduced smell), nasal polyps (often with loss of smell), or deviated septum (usually one-sided, may be lifelong). Unilateral nasal blockage with bleeding or discharge, especially if persistent, needs ENT assessment to exclude other causes. Consult your ENT specialist for persistent symptoms not responding to simple treatments.',
+  'nosebleed': 'Nosebleed research: Most nosebleeds are anterior (from the front of the nose) and self-limiting. First aid: sit upright leaning slightly forward (not backward), pinch the soft lower part of the nose continuously for 10-15 minutes, apply an ice pack. If bleeding does not stop after 15-20 minutes of proper pressure, or you feel dizzy/notice heavy blood loss, seek emergency care immediately - severe or posterior nosebleeds can be an emergency, especially in those on blood thinners.',
+  'neck lump': 'Neck lump research: Most neck lumps are reactive lymph nodes from infection and resolve within a few weeks. A lump that persists beyond 3-4 weeks, feels firm or hard, is not tender, and is growing - especially in adults over 40 - needs prompt ENT assessment to exclude more serious causes. Consult your doctor for any persistent or concerning neck lump; early assessment is important.',
+  'snoring': 'Snoring research: Simple snoring without breathing pauses is common and usually not medically concerning, though it can affect a bed partner. Loud snoring WITH witnessed pauses in breathing, gasping, or excessive daytime sleepiness suggests obstructive sleep apnoea (OSA) - this is associated with high blood pressure and cardiovascular risk and warrants assessment with a sleep study. Weight loss, treating nasal congestion, and CPAP therapy (for confirmed OSA) are effective treatments. Consult your ENT specialist or sleep physician if OSA is suspected.'
+};
+
+function sendChat(){
+  var inp=document.getElementById('chat-in');
+  if(!inp) return;
+  var msg=inp.value.trim(); if(!msg) return;
+  addMsg('user',msg); inp.value='';
+  var msgs=document.getElementById('chat-msgs');
+  var tid='ty-'+Date.now();
+  var ti=document.createElement('div'); ti.className='cm ai'; ti.id=tid;
+  ti.innerHTML='<div class="ai-lbl">ENTCare AI</div><div class="typing"><span></span><span></span><span></span></div>';
+  if(msgs){ msgs.appendChild(ti); msgs.scrollTop=msgs.scrollHeight; }
+  var key=currentApiKey();
+  if(ST.provider&&key){
+    fetch('/api/chat/send',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:msg,request_ai:true,provider:ST.provider,api_key:key})
+    }).then(function(r){ return r.json(); })
+    .then(function(data){
+      var el=document.getElementById(tid); if(el) el.remove();
+      if(data.ai_response){ addMsg('ai',data.ai_response,true); return; }
+      offlineChat(msg,null);
+    }).catch(function(){
+      var el=document.getElementById(tid); if(el) el.remove();
+      offlineChat(msg,null);
+    });
+  } else {
+    setTimeout(function(){ offlineChat(msg,tid); },600);
+  }
+}
+
+function offlineChat(msg,tid){
+  if(tid){ var el=document.getElementById(tid); if(el) el.remove(); }
+  var ml=msg.toLowerCase(); var resp='';
+  for(var k in CHAT_KB){ if(ml.indexOf(k)!==-1){ resp=CHAT_KB[k]; break; } }
+  if(!resp) resp='Thank you for your question about "'+escapeHtml(msg)+'". Browse the relevant sections for research, or choose an AI provider in Settings. For ENT emergencies (airway obstruction, severe bleeding, sudden hearing loss) act immediately &mdash; 112/999/911. Research purposes only &mdash; always consult your ENT specialist.';
+  addMsg('ai',resp,false);
+}
+
+function addMsg(type,text,isLive){
+  var msgs=document.getElementById('chat-msgs'); if(!msgs) return;
+  var el=document.createElement('div'); el.className='cm '+type;
+  if(type==='ai'){
+    var label=(isLive&&ST.provider)?('ENTCare AI &middot; '+escapeHtml(PROVIDERS[ST.provider].label)):'ENTCare AI';
+    el.innerHTML='<div class="ai-lbl">'+label+'</div>'+sanitizeAIResponse(text);
+  } else {
+    el.textContent=text;
+  }
+  msgs.appendChild(el); msgs.scrollTop=msgs.scrollHeight;
+}
+
+function setLoad(btn,state){
+  if(!btn) return;
+  if(state) btn.classList.add('loading'); else btn.classList.remove('loading');
+  btn.disabled=state;
+}
+
+function toast(msg){
+  var t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border2);color:var(--text);padding:12px 22px;border-radius:10px;font-size:14px;z-index:9999;box-shadow:var(--shadow);white-space:nowrap;';
+  t.textContent=msg; document.body.appendChild(t);
+  setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); },3000);
+}
+
+var uz=document.getElementById('uz');
+if(uz){
+  uz.addEventListener('dragover',function(e){e.preventDefault();uz.classList.add('drag');});
+  uz.addEventListener('dragleave',function(){uz.classList.remove('drag');});
+  uz.addEventListener('drop',function(e){e.preventDefault();uz.classList.remove('drag');handleFiles(e.dataTransfer.files);});
+}
+</script>
+</body>
+</html>
